@@ -92,10 +92,6 @@ func TestUnmarshalingError(t *testing.T) {
 	api := API{server.Client(), server.URL}
 	_, e := getGames(&api)
 	
-	// if e == nil {
-	// 	// e.msg
-	// 	t.Errorf("Não deveria ser null")
-	// }
 	assertNotNull(e, "should return a error", t)
 }
 

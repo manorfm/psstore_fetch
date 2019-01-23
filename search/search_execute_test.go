@@ -58,8 +58,6 @@ func TestDoStuffWithRoundTripper(t *testing.T) {
 
 	var countRequestsDid = 0
 	client := NewTestClient(func(req *http.Request) *http.Response {
-		// Test request parameters
-		//equals(t, req.URL.String(), "http://example.com/some/path")
 
 		countRequestsDid = countRequestsDid + 1
 
@@ -179,32 +177,3 @@ func TestTheNextIterationUnmarshalingErrorExecuteFunc(t *testing.T) {
 	
 	assertNotNull(e, "should return a error", t)
 }
-
-// func TestTheNextIterationUnmarshalingErrorExecuteFunc(t *testing.T) {
-// 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-
-// 		rw.Write([]byte(`{
-// 			"links": [{
-// 				"age_limit": "error7"
-// 			}]
-// 		}`))
-// 	}))
-// 	// Close the server when test finishes
-// 	defer server.Close()
-
-// 	_, e := Execute(server.URL, 20)
-	
-// 	assertNotNull(e, "should return a error", t)
-// }
-
-// func TestMainExecute(t *testing.T) {
-// 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
-// 		rw.Write([]byte(`{"size": 10, "start": 0, "total_results": 40}`))
-// 	}))
-// 	// Close the server when test finishes
-// 	defer server.Close()
-
-// 	_, e := Execute(server.URL, 1)
-
-// 	assertNull(e, "We got some problem, search has ended with some error: \"%s\"", t)
-// }
