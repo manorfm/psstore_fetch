@@ -39,7 +39,7 @@ func TestShouldMainPanicErrorWithOnlyStringArgs(t *testing.T) {
         }
 	}()
 	
-	os.Args = []string{`localhost.com`, `error`}
+	os.Args = []string{`exec.go`, `localhost.com`, `error`}
 	main()
 }
 
@@ -51,7 +51,7 @@ func TestShouldMainPanicWithInacessibleServer(t *testing.T) {
         }
 	}()
 	
-	os.Args = []string{`localhost.com`, strconv.Itoa(100)}
+	os.Args = []string{`exec.go`, `localhost.com`, strconv.Itoa(100)}
 	main()
 }
 
@@ -125,7 +125,7 @@ func TestArgs(t *testing.T) {
 	// Close the server when test finishes
 	defer server.Close()
 
-	os.Args = []string{server.URL + `?start=0&size=1`, strconv.Itoa(1)}
+	os.Args = []string{"exec.go", server.URL + `?start=0&size=1`, strconv.Itoa(1)}
 
 	main()
 }

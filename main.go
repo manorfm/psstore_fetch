@@ -13,12 +13,12 @@ func main() {
     fmt.Println("Starting the application...")
 
     argsWithProg := os.Args
-    if (len(argsWithProg) != 2) {
+    if (len(argsWithProg) != 3) {
         panic("Needed the path and the amount for pagination parameters.")
     }
 
-    path := argsWithProg[0]
-    itemsPerPageStr := argsWithProg[1]
+    path := argsWithProg[1]
+    itemsPerPageStr := argsWithProg[2]
     
     itemsPerPage, err := strconv.Atoi(itemsPerPageStr)
     
