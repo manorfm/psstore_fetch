@@ -7,33 +7,27 @@ import (
     "regexp"
 )
 
-// ReplacePathPagination Func
-func ReplacePathPagination(path string, start, size int) string {
+// UpdatePathPagination Func
+func UpdatePathPagination(path *string, start, size int) {
     
-    index := strings.Index(path, "?");
+    index := strings.Index(*path, "?");
     if (index < 0) {
-        path = path + "?"
+        *path = *path + "?"
     }
 
-    addOrChangeStart(&path, strconv.Itoa(start))
-    addOrChangeSize(&path, strconv.Itoa(size))
-    
-    return path
+    addOrChangeStart(path, strconv.Itoa(start))
+    addOrChangeSize(path, strconv.Itoa(size))
 }
 
-// InitialPagination add start and size if initual page doen't
+// FindStartPagination add start and size if initual page doen't
 // have it and return the initial pagination if already have add to the path
-func InitialPagination(path *string, start, size int) int {
-    var pattern = regexp.MustCompile(`start=(\d+)`)
+func FindStartPagination(path string) int {
+    pattern := regexp.MustCompile(`start=(\d+)`)
+    resultSet := pattern.FindStringSubmatch(path)
 
-    resultSet := pattern.FindStringSubmatch(*path)
     if len(resultSet) == 0 {
-        *path = *path + "?"
-        addOrChangeStart(path, strconv.Itoa(start))
-        addOrChangeSize(path, strconv.Itoa(size))
         return 0;
     }
-    fmt.Println(resultSet[1])
 
     newStart, _ := strconv.Atoi(resultSet[1])
     return newStart

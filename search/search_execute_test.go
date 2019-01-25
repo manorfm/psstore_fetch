@@ -173,7 +173,7 @@ func TestTheNextIterationUnmarshalingErrorExecuteFunc(t *testing.T) {
 	// Close the server when test finishes
 	defer server.Close()
 
-	_, e := Execute(server.URL + "?start=0&size=1", 1)
+	_, e := Execute(server.URL, 1)
 	
 	assertNotNull(e, "should return a error", t)
 }

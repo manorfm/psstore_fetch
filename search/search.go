@@ -34,7 +34,10 @@ func getGames(api *API) (Result *ResultSearch, e error) {
 // Execute the search
 func Execute(path string, itemsPerPage int) ([]Game, error) {
     client := &http.Client{}
-    start := util.InitialPagination(&path, 0, itemsPerPage)
+    
+    start := util.FindStartPagination(path)
+    util.UpdatePathPagination(&path, start, itemsPerPage)
+    
     API := API{Client: client, URL: path}
 
     return execute(start, itemsPerPage, &API)
@@ -52,9 +55,10 @@ func execute(start, size int, api *API) ([]Game, error) {
         start, size := next(result.Start, result.Size, result.Total);
         time.Sleep(6 * time.Second)
         
-        var url = util.ReplacePathPagination(api.URL, start, size)
+        path := api.URL
+        util.UpdatePathPagination(&path, start, size)
 
-        var nextGames, err = execute(start, size, &API{Client: api.Client, URL: url})
+        var nextGames, err = execute(start, size, &API{Client: api.Client, URL: path})
         if err != nil {
             return nil, err
         }
