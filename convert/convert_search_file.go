@@ -18,6 +18,7 @@ func ToFileStructureGames(games []search.Game) *[]file.Game {
             DataRelease: searchGame.DataRelease,
             ProviderName: searchGame.ProviderName,
             Rating: *convertRating(&searchGame.Rating),
+            Price: searchGame.Sku.Price,
         })
 	}
     return &fileGames

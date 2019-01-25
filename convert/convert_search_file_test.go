@@ -20,6 +20,9 @@ func getGames() *[]search.Game {
 				},
 			},
 			Plataforms: []string {"PS4"},
+			Sku: search.Sku {
+				Price: "56.00",
+			},
 		},
 		search.Game {
 			Name: "Fifa 2019",
@@ -121,5 +124,15 @@ func TestConvertMediaToScreenShots(t *testing.T) {
 	}
 	if game.ScreenShots[1] != "localhost/test2" {
 		t.Errorf("media screenshots does not match")
+	}
+}
+
+func TestPrice(t *testing.T) {
+	searchGames := *getGames()
+	fileGames := *ToFileStructureGames(searchGames)
+
+	game := fileGames[0]
+	if game.Price != "56.00" {
+		t.Errorf("the price does not match, receive %s, want %s", game.Price, "56.00")
 	}
 }

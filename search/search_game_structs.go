@@ -10,7 +10,16 @@ type Game struct {
     DataRelease string `json:"release_date"`
     ProviderName string `json:"provider_name"`
     Rating Rating `json:"star_rating"`
+    Sku Sku `json:"default_sku"`
 }
+
+// Sku informations
+type Sku struct {
+    Price string `json:"display_price"`
+    Type string `json:"type"`
+    Avaliable string `json:"playability_date"`
+}
+
 // Metadata struct
 type Metadata struct {
     Genere Genere `json:"genre"`

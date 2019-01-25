@@ -10,6 +10,7 @@ type Game struct {
     DataRelease string `json:"release"`
     ProviderName string `json:"provider"`
     Rating Rating `json:"rating"`
+    Price string `json:"price"`
 }
 
 // Vote struct
