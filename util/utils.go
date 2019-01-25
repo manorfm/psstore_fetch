@@ -21,6 +21,24 @@ func ReplacePathPagination(path string, start, size int) string {
     return path
 }
 
+// InitialPagination add start and size if initual page doen't
+// have it and return the initial pagination if already have add to the path
+func InitialPagination(path *string, start, size int) int {
+    var pattern = regexp.MustCompile(`start=(\d+)`)
+
+    resultSet := pattern.FindStringSubmatch(*path)
+    if len(resultSet) == 0 {
+        *path = *path + "?"
+        addOrChangeStart(path, strconv.Itoa(start))
+        addOrChangeSize(path, strconv.Itoa(size))
+        return 0;
+    }
+    fmt.Println(resultSet[1])
+
+    newStart, _ := strconv.Atoi(resultSet[1])
+    return newStart
+}
+
 func addOrChangeStart(path *string, start string) {
     regexStart := regexp.MustCompile("(start=)\\d+")
     startLoc := regexStart.FindIndex([]byte(*path))

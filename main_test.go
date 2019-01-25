@@ -125,7 +125,7 @@ func TestArgs(t *testing.T) {
 	// Close the server when test finishes
 	defer server.Close()
 
-	os.Args = []string{"exec.go", server.URL + `?start=0&size=1`, strconv.Itoa(1)}
+	os.Args = []string{"exec.go", server.URL, strconv.Itoa(1)}
 
 	main()
 }

@@ -34,9 +34,10 @@ func getGames(api *API) (Result *ResultSearch, e error) {
 // Execute the search
 func Execute(path string, itemsPerPage int) ([]Game, error) {
     client := &http.Client{}
+    start := util.InitialPagination(&path, 0, itemsPerPage)
     API := API{Client: client, URL: path}
 
-    return execute(0, itemsPerPage, &API)
+    return execute(start, itemsPerPage, &API)
 }
 
 func execute(start, size int, api *API) ([]Game, error) {
