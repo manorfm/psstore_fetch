@@ -1,65 +1,35 @@
 package main
 
 import (
-	"testing"
-	"os"
-	"strconv"
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
-	"fmt"
 	"net/http/httptest"
+	"os"
+	"strconv"
+	"testing"
 )
 
 func TestShouldPanicWithNonArgs(t *testing.T) {
-
-	defer func() {
-        if r := recover(); r == nil {
-            t.Errorf("The code did not panic")
-        }
-    }()
+	os.Args = []string{}
 	main()
 }
 func TestShoundPanicOnlyWithPathInArgs(t *testing.T) {
-
-	defer func() {
-        if r := recover(); r == nil {
-            t.Errorf("The code did not panic")
-        }
-	}()
-	
 	os.Args = []string{`localhost.com`}
 	main()
 }
 func TestShouldMainPanicErrorWithOnlyStringArgs(t *testing.T) {
-
-	defer func() {
-        if r := recover(); r == nil {
-            t.Errorf("The code did not panic")
-        }
-	}()
-	
 	os.Args = []string{`exec.go`, `localhost.com`, `error`}
 	main()
 }
 
 func TestShouldMainPanicWithInacessibleServer(t *testing.T) {
-
-	defer func() {
-        if r := recover(); r == nil {
-            t.Errorf("The code did not panic")
-        }
-	}()
-	
 	os.Args = []string{`exec.go`, `localhost.com`, strconv.Itoa(100)}
 	main()
 }
 
 func TestArgs(t *testing.T) {
-	
-	// path := "https://store.playstation.com/chihiro-api/viewfinder/SA/en/999/STORE-MSF75508-FULLGAMES?start=0&size=5"
-	// os.Args = []string{path, strconv.Itoa(5)}
-
 	gamesRepository := [2]string {`{
 		"age_limit": 7,
 		"name": "Game test",

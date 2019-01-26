@@ -2,8 +2,10 @@ package search
 
 import (
 	"bytes"
+	"github.com/goinggo/tracelog"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"testing"
 	"fmt"
 	"strconv"
@@ -86,13 +88,13 @@ func TestDoStuffWithRoundTripper(t *testing.T) {
 	})
 
 	api := API{client, "http://localhost/test?start=0&size=1"}
-	games, _ := execute(0, 1, &api)
+	games, _ := execute(&api)
 	
 	length := len(games)
-	if (length != 2) {
+	if length != 2 {
 		t.Errorf("The count of games should was %d, want: %d.", length, 2)
 	}
-	if (countRequestsDid != 2) {
+	if countRequestsDid != 2 {
 		t.Errorf("The count of requests should was %d, want: %d.", countRequestsDid, 2)
 	}	
 }
@@ -102,7 +104,7 @@ func TestRequestErrorExecuteFunc(t *testing.T) {
 	assertNotNull(e, "should return a error", t)
 }
 
-func TestUnmarshalingErrorExecuteFunc(t *testing.T) {
+func TestUnMarshalingErrorExecuteFunc(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 
 		rw.Write([]byte(`{
@@ -119,7 +121,7 @@ func TestUnmarshalingErrorExecuteFunc(t *testing.T) {
 	assertNotNull(e, "should return a error", t)
 }
 
-func TestTheNextIterationUnmarshalingErrorExecuteFunc(t *testing.T) {
+func TestTheNextIterationUnMarshalingErrorExecuteFunc(t *testing.T) {
 
 	gamesRepository := [2]string {`{
 		"age_limit": 7,
@@ -176,4 +178,11 @@ func TestTheNextIterationUnmarshalingErrorExecuteFunc(t *testing.T) {
 	_, e := Execute(server.URL, 1)
 	
 	assertNotNull(e, "should return a error", t)
+}
+
+func TestMain(m *testing.M) {
+	tracelog.Start(tracelog.LevelTrace)
+	code := m.Run()
+	tracelog.Stop()
+	os.Exit(code)
 }

@@ -1,6 +1,7 @@
 package file
 
 import (
+	"github.com/goinggo/tracelog"
 	"testing"
 	"io/ioutil"
 	"bytes"
@@ -37,4 +38,11 @@ func TestWriteFile(t *testing.T) {
 	}
 
 	os.Remove(path)
+}
+
+func TestMain(m *testing.M) {
+	tracelog.Start(tracelog.LevelTrace)
+	code := m.Run()
+	tracelog.Stop()
+	os.Exit(code)
 }

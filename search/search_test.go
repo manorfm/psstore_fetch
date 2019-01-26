@@ -77,7 +77,7 @@ func TestSearchGame(t *testing.T) {
 	assert(vote.Count, 2, "Total count of rating of games result from search was incorrect", t)
 }
 
-func TestUnmarshalingError(t *testing.T) {
+func TestUnMarshalingError(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 
 		rw.Write([]byte(`{

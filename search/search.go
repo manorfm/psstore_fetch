@@ -2,10 +2,11 @@ package search
 
 import (
     "encoding/json"
+    "github.com/goinggo/tracelog"
     "io/ioutil"
     "net/http"
-    "time"
     "psstore/util"
+    "time"
 )
 
 //API struct
@@ -34,34 +35,47 @@ func getGames(api *API) (Result *ResultSearch, e error) {
 // Execute the search
 func Execute(path string, itemsPerPage int) ([]Game, error) {
     client := &http.Client{}
-    
+
+
     start := util.FindStartPagination(path)
     util.UpdatePathPagination(&path, start, itemsPerPage)
-    
+
     API := API{Client: client, URL: path}
 
-    return execute(start, itemsPerPage, &API)
+    tracelog.Info("PsStore", "Execute",
+        "executing search starting at %d with %d games at path %s", start, itemsPerPage, path)
+
+    return execute(&API)
 }
 
-func execute(start, size int, api *API) ([]Game, error) {
+func execute(api *API) ([]Game, error) {
     result, err := getGames(api)
 
     if err != nil {
         return nil, err
     }
 
+    tracelog.Info("PsStore", "execute","found %d games", result.Total)
+
     var games = result.Games
     if hasNext(result.Start, result.Size, result.Total) {
-        start, size := next(result.Start, result.Size, result.Total);
+        var start, size int = next(result.Start, result.Size, result.Total);
         time.Sleep(6 * time.Second)
-        
+
         path := api.URL
         util.UpdatePathPagination(&path, start, size)
 
-        var nextGames, err = execute(start, size, &API{Client: api.Client, URL: path})
+        tracelog.Info("PsStore", "execute",
+            "executing search starting at %d with %d games at path %s", start, size, path)
+
+        nextGames, err := execute(&API{Client: api.Client, URL: path})
         if err != nil {
             return nil, err
         }
+
+        tracelog.Info("PsStore", "execute",
+            "append more %d games found", len(nextGames))
+
         return append(games, nextGames...), nil
     }
     return games, nil
