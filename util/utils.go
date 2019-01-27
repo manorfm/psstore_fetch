@@ -11,7 +11,7 @@ import (
 func UpdatePathPagination(path *string, start, size int) {
     
     index := strings.Index(*path, "?");
-    if (index < 0) {
+    if index < 0 {
         *path = *path + "?"
     }
 
@@ -19,14 +19,14 @@ func UpdatePathPagination(path *string, start, size int) {
     addOrChangeSize(path, strconv.Itoa(size))
 }
 
-// FindStartPagination add start and size if initual page doen't
+// FindStartPagination add start and size if initial page doesn't
 // have it and return the initial pagination if already have add to the path
 func FindStartPagination(path string) int {
     pattern := regexp.MustCompile(`start=(\d+)`)
     resultSet := pattern.FindStringSubmatch(path)
 
     if len(resultSet) == 0 {
-        return 0;
+        return 0
     }
 
     newStart, _ := strconv.Atoi(resultSet[1])

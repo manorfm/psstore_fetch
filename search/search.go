@@ -4,6 +4,7 @@ import (
     "encoding/json"
     "io/ioutil"
     "log"
+    "math/rand"
     "net/http"
     "psstore/util"
     "time"
@@ -57,7 +58,9 @@ func execute(api *API) ([]Game, error) {
     var games = result.Games
     if hasNext(result.Start, result.Size, result.Total) {
         var start, size int = next(result.Start, result.Size, result.Total);
-        time.Sleep(6 * time.Second)
+
+        sleep := random(3, 6)
+        time.Sleep(time.Duration(sleep) * time.Second)
 
         path := api.URL
         util.UpdatePathPagination(&path, start, size + 1)
@@ -71,7 +74,13 @@ func execute(api *API) ([]Game, error) {
 
         return append(games, nextGames...), nil
     }
+
     return games, nil
+}
+
+func random(min, max int) int {
+    rand.Seed(time.Now().UnixNano())
+    return rand.Intn(max-min) + min
 }
 
 func hasNext(start, size, total int) bool {
