@@ -15,9 +15,14 @@ var (
 )
 
 func init() {
-    logFile, err := os.OpenFile("./psstore.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+
+    logFolder := "./log"
+    if _, err := os.Stat(logFolder); os.IsNotExist(err) {
+        os.Mkdir(logFolder, os.ModePerm)
+    }
+    logFile, err := os.OpenFile("./log/psstore.log", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
     if err != nil {
-        log.Fatalf("error opening file: %v", err)
+        log.Fatalf("Error opening file: %v", err)
     }
 
     log.SetOutput(logFile)
