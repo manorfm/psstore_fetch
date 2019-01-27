@@ -2,16 +2,15 @@ package file
 
 import (
 	"bytes"
-    "encoding/json"
-	"github.com/goinggo/tracelog"
+	"encoding/json"
 	"io/ioutil"
+	"log"
 )
 
-//Write that used to write file
+//Write that is used to write output.json file with all games fetched from api
 func Write(games *[]Game) {
 
-	tracelog.Info("PsStore", "Write",
-		"executing writing of %d games", len(*games))
+	log.Printf("Executing writing of %d games to output.json", len(*games))
 
 	buffers := new(bytes.Buffer)
     json.NewEncoder(buffers).Encode(games)
