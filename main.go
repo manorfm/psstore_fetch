@@ -12,6 +12,7 @@ import (
 
 var (
     logFile  *os.File
+    osExit = os.Exit
 )
 
 func init() {
@@ -33,8 +34,9 @@ func main() {
 
     args := os.Args
 
-    if len(args) != 3 {
+    if len(args) < 3 {
         exiting("Error: Empty args, I need PS api path and pagination amount by args.", 1)
+        return
     }
 
     path := args[1]
@@ -44,21 +46,23 @@ func main() {
     
     if err != nil {
         exiting("Error: Pagination amount has to be numerical.", 2)
+        return
     }
     
     games, err := search.Execute(path, itemsPerPage)
     
     if err != nil {
         exiting(fmt.Sprintf("Error while execute search to path %s, %v", path, err), 3)
+        return
     }
 
-    log.Printf("Fetched a total of %d games", len(games), )
+    log.Printf("Fetched a total of %d games", len(games))
 
     file.Write(convert.ToFileStructureGames(games))
 }
 
 func exiting(message string, code int) {
     log.Println(message)
-    os.Exit(code)
+    osExit(code)
 }
 

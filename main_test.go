@@ -12,21 +12,71 @@ import (
 )
 
 func TestShouldPanicWithNonArgs(t *testing.T) {
-	os.Args = []string{}
+	os.Args = []string{`exec.exe`}
+
+	oldOsExit := osExit
+	defer func() { osExit = oldOsExit }()
+
+	var got int
+	myExit := func(code int) {
+		got = code
+	}
+
+	osExit = myExit
 	main()
+	if exp := 1; got != exp {
+		t.Errorf("Expected exit code: %d, got: %d", exp, got)
+	}
 }
-func TestShoundPanicOnlyWithPathInArgs(t *testing.T) {
-	os.Args = []string{`localhost.com`}
+
+func TestShouldPanicOnlyWithPathInArgs(t *testing.T) {
+	os.Args = []string{`exec.exe`,`localhost.com`}
+	oldOsExit := osExit
+	defer func() { osExit = oldOsExit }()
+
+	var got int
+	myExit := func(code int) {
+		got = code
+	}
+
+	osExit = myExit
 	main()
+	if exp := 1; got != exp {
+		t.Errorf("Expected exit code: %d, got: %d", exp, got)
+	}
 }
 func TestShouldMainPanicErrorWithOnlyStringArgs(t *testing.T) {
 	os.Args = []string{`exec.go`, `localhost.com`, `error`}
+	oldOsExit := osExit
+	defer func() { osExit = oldOsExit }()
+
+	var got int
+	myExit := func(code int) {
+		got = code
+	}
+
+	osExit = myExit
 	main()
+	if exp := 2; got != exp {
+		t.Errorf("Expected exit code: %d, got: %d", exp, got)
+	}
 }
 
 func TestShouldMainPanicWithInacessibleServer(t *testing.T) {
 	os.Args = []string{`exec.go`, `localhost.com`, strconv.Itoa(100)}
+	oldOsExit := osExit
+	defer func() { osExit = oldOsExit }()
+
+	var got int
+	myExit := func(code int) {
+		got = code
+	}
+
+	osExit = myExit
 	main()
+	if exp := 3; got != exp {
+		t.Errorf("Expected exit code: %d, got: %d", exp, got)
+	}
 }
 
 func TestArgs(t *testing.T) {
