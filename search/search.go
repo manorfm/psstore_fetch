@@ -2,6 +2,7 @@ package search
 
 import (
     "encoding/json"
+    "github.com/schollz/progressbar"
     "io/ioutil"
     "log"
     "math/rand"
@@ -55,6 +56,11 @@ func execute(api *API) ([]Game, error) {
         return nil, err
     }
 
+    bar := progressbar.NewOptions(result.Total)
+    bar.RenderBlank()
+    bar.Add(result.Size)
+
+
     var games = result.Games
     for hasNext(result.Start, result.Size, result.Total) {
         var start, size int = next(result.Start, result.Size, result.Total);
@@ -72,6 +78,7 @@ func execute(api *API) ([]Game, error) {
             return nil, err
         }
 
+        bar.Add(result.Size)
         games = append(games, result.Games...)
     }
 
