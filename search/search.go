@@ -56,7 +56,7 @@ func execute(api *API) ([]Game, error) {
     }
 
     var games = result.Games
-    if hasNext(result.Start, result.Size, result.Total) {
+    for hasNext(result.Start, result.Size, result.Total) {
         var start, size int = next(result.Start, result.Size, result.Total);
 
         sleep := random(3, 6)
@@ -67,12 +67,12 @@ func execute(api *API) ([]Game, error) {
 
         log.Printf("Executing search starting at %d and fetching more %d games of %d at path %s", start, size, result.Total, path)
 
-        var nextGames, err = execute(&API{Client: api.Client, URL: path})
+        result, err = getGames(&API{Client: api.Client, URL: path})
         if err != nil {
             return nil, err
         }
 
-        return append(games, nextGames...), nil
+        games = append(games, result.Games...)
     }
 
     return games, nil
