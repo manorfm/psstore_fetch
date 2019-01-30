@@ -1,21 +1,23 @@
 package file
 
 import (
-	"github.com/goinggo/tracelog"
-	"testing"
-	"io/ioutil"
 	"bytes"
 	"encoding/json"
+	"github.com/goinggo/tracelog"
+	"io/ioutil"
 	"os"
+
+	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestWriteFile(t *testing.T) {
-	games := []Game { Game {
+	games := []Game {{
 			AgeLimit: 16,
 			Name: "God of War 4",
 			ProviderName: "Sony",
 		},
-		Game {
+		{
 			AgeLimit: 7,
 			Name: "Crash",
 			ProviderName: "Activision",
@@ -26,16 +28,13 @@ func TestWriteFile(t *testing.T) {
 
 	path := "output.json"
 	g, err := ioutil.ReadFile(path)
-	if err != nil {
-		t.Fatalf("failed reading file: %s", err)
-	}
+	assert.Nil(t, err, "failed reading file %v", err)
+
 
 	buffers := new(bytes.Buffer)
     json.NewEncoder(buffers).Encode(games)
-	
-	if !bytes.Equal(buffers.Bytes(), g) {
-		t.Errorf("written json does not match")
-	}
+
+	assert.True(t, bytes.Equal(buffers.Bytes(), g), "written json does not match")
 
 	os.Remove(path)
 }

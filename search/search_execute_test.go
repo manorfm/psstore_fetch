@@ -6,10 +6,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"testing"
 	"fmt"
 	"strconv"
+
+	"testing"
 	"net/http/httptest"
+	"github.com/stretchr/testify/assert"
 )
 
 // RoundTripFunc .
@@ -22,12 +24,10 @@ func (f RoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 
 //NewTestClient returns *http.Client with Transport replaced to avoid making real calls
 func NewTestClient(fn RoundTripFunc) *http.Client {
-	return &http.Client{
-		Transport: RoundTripFunc(fn),
-	}
+	return &http.Client{ Transport: RoundTripFunc(fn) }
 }
 
-func TestDoStuffWithRoundTripper(t *testing.T) {
+func TestShouldReturnGamesDoingTwoRequests(t *testing.T) {
 
 	gamesRepository := [2]string {`{
 		"age_limit": 7,
@@ -42,7 +42,7 @@ func TestDoStuffWithRoundTripper(t *testing.T) {
 				"count": 2
 			}]
 		}
-	}`, 
+	}`,
 	`{
 		"age_limit": 18,
 		"name": "God of war 3",
@@ -61,12 +61,11 @@ func TestDoStuffWithRoundTripper(t *testing.T) {
 	var countRequestsDid = 0
 	client := NewTestClient(func(req *http.Request) *http.Response {
 
-		countRequestsDid = countRequestsDid + 1
+		countRequestsDid++
 
 		index, e := strconv.ParseInt(req.FormValue("start"), 10, 32)
-		if e != nil {
-			t.Errorf("Error getting start value from Request: %s", e)
-		}
+
+		assert.Nil(t, e, "Should not show error while getting start value from Request: %s", e)
 
 		return &http.Response {
 			StatusCode: 200,
@@ -88,20 +87,17 @@ func TestDoStuffWithRoundTripper(t *testing.T) {
 	})
 
 	api := API{client, "http://localhost/test?start=0&size=1"}
-	games, _ := execute(&api)
-	
-	length := len(games)
-	if length != 2 {
-		t.Errorf("The count of games should was %d, want: %d.", length, 2)
-	}
-	if countRequestsDid != 2 {
-		t.Errorf("The count of requests should was %d, want: %d.", countRequestsDid, 2)
-	}	
+	games, err := execute(&api)
+
+	assert.Nil(t, err, "the code must not return an error")
+	assert.Equal(t, 2, len(games), "The count of games doesn't match")
+	assert.Equal(t, 2, countRequestsDid, "The count of requests did doesn't match")
 }
 
 func TestRequestErrorExecuteFunc(t *testing.T) {	
-	_, e := Execute("http://localhost/something/testing", 10)
-	assertNotNull(e, "should return a error", t)
+	games, e := Execute("http://localhost/something/testing", 10)
+	assert.NotNil(t, e, "should return a error")
+	assert.Nil(t, games, "should return a nil where a error on function")
 }
 
 func TestUnMarshalingErrorExecuteFunc(t *testing.T) {
@@ -116,9 +112,10 @@ func TestUnMarshalingErrorExecuteFunc(t *testing.T) {
 	// Close the server when test finishes
 	defer server.Close()
 
-	_, e := Execute(server.URL, 20)
-	
-	assertNotNull(e, "should return a error", t)
+	games, e := Execute(server.URL, 20)
+
+	assert.NotNil(t, e, "should return a error")
+	assert.Nil(t, games, "should return a nil where a error on function")
 }
 
 func TestTheNextIterationUnMarshalingErrorExecuteFunc(t *testing.T) {
@@ -155,9 +152,7 @@ func TestTheNextIterationUnMarshalingErrorExecuteFunc(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 
 		index, e := strconv.ParseInt(req.FormValue("start"), 10, 32)
-		if e != nil {
-			t.Errorf("Error getting start value from Request: %s", e)
-		}
+		assert.Nil(t, e, "Should not show error while getting start value from Request: %s", e)
 
 		rw.Write([]byte(
 				fmt.Sprintf(`{ 
@@ -175,9 +170,10 @@ func TestTheNextIterationUnMarshalingErrorExecuteFunc(t *testing.T) {
 	// Close the server when test finishes
 	defer server.Close()
 
-	_, e := Execute(server.URL, 1)
-	
-	assertNotNull(e, "should return a error", t)
+	games, e := Execute(server.URL, 1)
+
+	assert.NotNil(t, e, "should return a error")
+	assert.Nil(t, games, "should return a nil where a error on function")
 }
 
 func TestMain(m *testing.M) {

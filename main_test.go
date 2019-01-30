@@ -3,11 +3,13 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
-	"net/http/httptest"
 	"os"
 	"strconv"
+
+	"net/http/httptest"
 	"testing"
 )
 
@@ -24,9 +26,7 @@ func TestShouldPanicWithNonArgs(t *testing.T) {
 
 	osExit = myExit
 	main()
-	if exp := 1; got != exp {
-		t.Errorf("Expected exit code: %d, got: %d", exp, got)
-	}
+	assert.Equal(t, 1, got, "got wrong exit code")
 }
 
 func TestShouldPanicOnlyWithPathInArgs(t *testing.T) {
@@ -41,9 +41,8 @@ func TestShouldPanicOnlyWithPathInArgs(t *testing.T) {
 
 	osExit = myExit
 	main()
-	if exp := 1; got != exp {
-		t.Errorf("Expected exit code: %d, got: %d", exp, got)
-	}
+
+	assert.Equal(t, 1, got, "got wrong exit code")
 }
 func TestShouldMainPanicErrorWithOnlyStringArgs(t *testing.T) {
 	os.Args = []string{`exec.go`, `localhost.com`, `error`}
@@ -57,9 +56,8 @@ func TestShouldMainPanicErrorWithOnlyStringArgs(t *testing.T) {
 
 	osExit = myExit
 	main()
-	if exp := 2; got != exp {
-		t.Errorf("Expected exit code: %d, got: %d", exp, got)
-	}
+
+	assert.Equal(t, 2, got, "got wrong exit code")
 }
 
 func TestShouldMainPanicWithInacessibleServer(t *testing.T) {
@@ -74,9 +72,8 @@ func TestShouldMainPanicWithInacessibleServer(t *testing.T) {
 
 	osExit = myExit
 	main()
-	if exp := 3; got != exp {
-		t.Errorf("Expected exit code: %d, got: %d", exp, got)
-	}
+
+	assert.Equal(t, 3, got, "got wrong exit code")
 }
 
 func TestArgs(t *testing.T) {

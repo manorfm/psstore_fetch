@@ -17,7 +17,7 @@ type Game struct {
 type Sku struct {
     Price string `json:"display_price"`
     Type string `json:"type"`
-    Avaliable string `json:"playability_date"`
+    Available string `json:"playability_date"`
 }
 
 // Metadata struct

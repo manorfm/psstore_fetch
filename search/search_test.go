@@ -2,8 +2,10 @@ package search
 
 import (
 	"net/http"
+
 	"net/http/httptest"
 	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSearchTotal(t *testing.T) {
@@ -17,10 +19,10 @@ func TestSearchTotal(t *testing.T) {
 	api := API{server.Client(), server.URL}
 	result, e := getGames(&api)
 
-	assertNull(e, "We got some problem, search has ended with some error: \"%s\"", t)
-	assert(result.Size, 10, "Size of search result was incorrect", t)
-	assert(result.Start, 0, "Start of search result was incorrect", t)
-	assert(result.Total, 40, "Total of search result was incorrect", t)
+	assert.Nil(t, e, "We got some problem, search has ended with some error: \"%s\"")
+	assert.Equal(t, 10, result.Size, "Size of search result was incorrect")
+	assert.Equal(t, 0, result.Start, "Start of search result was incorrect")
+	assert.Equal(t, 40, result.Total, "Total of search result was incorrect")
 }
 
 func TestSearchGame(t *testing.T) {
@@ -49,32 +51,32 @@ func TestSearchGame(t *testing.T) {
 	api := API{server.Client(), server.URL}
 	result, e := getGames(&api)
 
-	assertNull(e, "We got some problem, search has ended with some error: \"%s\"", t)
-	assert(len(result.Games), 1, "Quantity of games result from search was incorrect", t)
+	assert.Nil(t, e, "We got some problem, search has ended with some error: \"%s\"", e)
+	assert.Equal(t, 1, len(result.Games), "Quantity of games result from search was incorrect")
 	
 	game := result.Games[0]
 
-	assert(game.AgeLimit, 7, "Age limit of games result from search was incorrect", t)
-	assertStr(game.Name, "Game test", "Name of game of games result from search was incorrect", t)
-	assert(len(game.Plataforms), 1, "Plataform of games result from search was incorrect", t)
+	assert.Equal(t, 7, game.AgeLimit,"Age limit of games result from search was incorrect")
+	assert.Equal(t, "Game test", game.Name,"Name of game of games result from search was incorrect")
+	assert.Equal(t, 1, len(game.Plataforms),"Plataform of games result from search was incorrect")
 
 	plataform := game.Plataforms[0]
-	assertStr(plataform, "PS4", "Plataform of game of games result from search was incorrect", t)
-	assertStr(game.ProviderName , "Activision", "Provider of game of games result from search was incorrect", t)
+	assert.Equal(t, "PS4", plataform, "Plataform of game of games result from search was incorrect")
+	assert.Equal(t, "Activision", game.ProviderName, "Provider of game of games result from search was incorrect")
 
 	rating := game.Rating
 
-	assertNotNull(&rating, "Error by: Rating of games result not exist", t)
-	assertFloat(rating.Score, 4.0, "Rating score of rating of games result from search was incorrect", t)
-	assert(rating.Total, 2, "Total votes of rating of games result from search was incorrect", t)
+	assert.NotNil(t, &rating, "Error by: Rating of games result not exist")
+	assert.Equal(t, float32(4.0), rating.Score, "Rating score of rating of games result from search was incorrect")
+	assert.Equal(t, 2, rating.Total, "Total votes of rating of games result from search was incorrect")
 
 	votes := rating.Votes
 
-	assert(len(votes), 1, "Votes rating of games result from search was incorrect", t)
+	assert.Equal(t, 1, len(votes), "Votes rating of games result from search was incorrect")
 
 	vote := votes[0]
-	assert(vote.Star, 4, "Total start of rating of games result from search was incorrect", t)
-	assert(vote.Count, 2, "Total count of rating of games result from search was incorrect", t)
+	assert.Equal(t, 4, vote.Star, "Total start of rating of games result from search was incorrect")
+	assert.Equal(t, 2, vote.Count, "Total count of rating of games result from search was incorrect")
 }
 
 func TestUnMarshalingError(t *testing.T) {
@@ -92,7 +94,7 @@ func TestUnMarshalingError(t *testing.T) {
 	api := API{server.Client(), server.URL}
 	_, e := getGames(&api)
 	
-	assertNotNull(e, "should return a error", t)
+	assert.NotNil(t, e, "should return a error")
 }
 
 func TestRequestError(t *testing.T) {
@@ -100,76 +102,33 @@ func TestRequestError(t *testing.T) {
 	API := API{Client: client, URL: "http://localhost/something/testing"}
 	
 	_, e := getGames(&API)
-	assertNotNull(e, "should return a error", t)
+	assert.NotNil(t, e, "should return a error")
 }
 
 func TestNext(t *testing.T) {
 	next, _ := next(0, 10, 5242);
 	
-	assert(next, 10, "Next was incorrect", t)
+	assert.Equal(t, 10, next, "Next was incorrect")
 }
 func TestNextAboveTotal(t *testing.T) {
 	next, size := next(5240, 10, 5242)
 	
-	assert(next, 5242, "Next was incorrect", t)
-	assert(size, 0, "Next was incorrect", t)
+	assert.Equal(t, 5242, next, "Next was incorrect")
+	assert.Equal(t, 0, size, "Next was incorrect")
 }
 
 func TestNotHasNext(t *testing.T) {
-	assertFalse(hasNext(5300, 10, 5242), "HasNext was incorrect", t)
+	assert.False(t, hasNext(5300, 10, 5242), "HasNext was incorrect")
 }
 
 func TestNotHasNextTotalZero(t *testing.T) {
-	assertFalse(hasNext(0, 10, 0), "HasNext can't have total equals 0", t)
+	assert.False(t, hasNext(0, 10, 0), "HasNext can't have total equals 0")
 }
 
 func TestNotHasNextSizeZero(t *testing.T) {
-	assertFalse(hasNext(0, 0, 10), "HasNext can't have size equals 0", t)
+	assert.False(t, hasNext(0, 0, 10), "HasNext can't have size equals 0")
 }
 
 func TestHasNext(t *testing.T) {
-	assertTrue(hasNext(0, 10, 5242), "HasNext was incorrect", t)
-}
-
-type Object interface {
-
-}
-
-func assertNotNull(value Object, message string, t *testing.T) {
-	if value == nil {
-		t.Errorf(message, value)
-	}
-}
-
-func assertNull(value Object, message string, t *testing.T) {
-	if value != nil {
-		t.Errorf(message, value)
-	}
-}
-
-func assert(value, compare int, message string, t *testing.T) {
-	if value != compare {
-		t.Errorf("%s, got: %d, want: %d.", message, value, compare)
-	}
-}
-
-func assertFloat(value, compare float32, message string, t *testing.T) {
-	if value != compare {
-		t.Errorf("%s, got: %f, want: %f.", message, value, compare)
-	}
-}
-func assertStr(value, compare string, message string, t *testing.T) {
-	if value != compare {
-		t.Errorf("%s, got: %s, want: %s.", message, value, compare)
-	}
-}
-
-func assertFalse(value bool, message string, t *testing.T) {
-	if value {
-		t.Errorf(message)
-	}
-}
-
-func assertTrue(value bool, message string, t *testing.T) {
-	assertFalse(!value, message, t)
+	assert.True(t, hasNext(0, 10, 5242), "HasNext was incorrect")
 }
