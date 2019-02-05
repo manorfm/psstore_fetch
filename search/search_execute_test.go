@@ -87,7 +87,7 @@ func TestShouldReturnGamesDoingTwoRequests(t *testing.T) {
 	})
 
 	api := API{client, "http://localhost/test?start=0&size=1"}
-	games, err := execute(&api)
+	games, err := execute(api)
 
 	assert.Nil(t, err, "the code must not return an error")
 	assert.Equal(t, 2, len(games), "The count of games doesn't match")

@@ -17,7 +17,7 @@ func TestSearchTotal(t *testing.T) {
 
 	// Use Client & URL from our local test server
 	api := API{server.Client(), server.URL}
-	result, e := getGames(&api)
+	result, e := getGames(api)
 
 	assert.Nil(t, e, "We got some problem, search has ended with some error: \"%s\"")
 	assert.Equal(t, 10, result.Size, "Size of search result was incorrect")
@@ -49,7 +49,7 @@ func TestSearchGame(t *testing.T) {
 	defer server.Close()
 
 	api := API{server.Client(), server.URL}
-	result, e := getGames(&api)
+	result, e := getGames(api)
 
 	assert.Nil(t, e, "We got some problem, search has ended with some error: \"%s\"", e)
 	assert.Equal(t, 1, len(result.Games), "Quantity of games result from search was incorrect")
@@ -92,7 +92,7 @@ func TestUnMarshalingError(t *testing.T) {
 	defer server.Close()
 
 	api := API{server.Client(), server.URL}
-	_, e := getGames(&api)
+	_, e := getGames(api)
 	
 	assert.NotNil(t, e, "should return a error")
 }
@@ -101,7 +101,7 @@ func TestRequestError(t *testing.T) {
 	client := &http.Client{}
 	API := API{Client: client, URL: "http://localhost/something/testing"}
 	
-	_, e := getGames(&API)
+	_, e := getGames(API)
 	assert.NotNil(t, e, "should return a error")
 }
 
