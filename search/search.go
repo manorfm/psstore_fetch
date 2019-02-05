@@ -18,7 +18,7 @@ type API struct {
 }
 
 // GetGames search and return the result of game searched on playstation store
-func getGames(api *API) (Result *ResultSearch, e error) {
+func getGames(api API) (Result *ResultSearch, e error) {
     response, err := api.Client.Get(api.URL)
     
     if err == nil {
@@ -46,10 +46,10 @@ func Execute(path string, itemsPerPage int) ([]Game, error) {
 
     log.Printf("executing search starting at %d with %d games at path %s", start, itemsPerPage, path)
 
-    return execute(&API)
+    return execute(API)
 }
 
-func execute(api *API) ([]Game, error) {
+func execute(api API) ([]Game, error) {
     result, err := getGames(api)
 
     if err != nil {
@@ -73,7 +73,7 @@ func execute(api *API) ([]Game, error) {
 
         log.Printf("Executing search starting at %d and fetching more %d games of %d at path %s", start, size, result.Total, path)
 
-        result, err = getGames(&API{Client: api.Client, URL: path})
+        result, err = getGames(API{Client: api.Client, URL: path})
         if err != nil {
             return nil, err
         }
