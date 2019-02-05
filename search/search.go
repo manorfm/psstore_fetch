@@ -7,7 +7,7 @@ import (
     "log"
     "math/rand"
     "net/http"
-    "psstore/util"
+    "github.com/manorfm/psstore/util"
     "time"
 )
 

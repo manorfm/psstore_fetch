@@ -4,9 +4,9 @@ import (
     "fmt"
     "log"
     "os"
-    "psstore/convert"
-    "psstore/file"
-    "psstore/search"
+    "github.com/manorfm/psstore/convert"
+    "github.com/manorfm/psstore/file"
+    "github.com/manorfm/psstore/search"
     "strconv"
 )
 

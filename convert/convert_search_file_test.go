@@ -1,7 +1,7 @@
 package convert
 
 import (
-	"psstore/search"
+	"github.com/manorfm/psstore/search"
 
 	"github.com/stretchr/testify/assert"
 	"testing"

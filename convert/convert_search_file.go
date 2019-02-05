@@ -1,8 +1,8 @@
 package convert
 
 import (
-	"psstore/search"
-	"psstore/file"
+	"github.com/manorfm/psstore/search"
+	"github.com/manorfm/psstore/file"
 )
 
 // ToFileStructureGames from search.Game to file.Game
